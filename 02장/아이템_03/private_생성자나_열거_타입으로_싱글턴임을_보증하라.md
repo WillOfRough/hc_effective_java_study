@@ -91,6 +91,47 @@ public class DatabaseInfo {
 }
 ```
 
+### 정적 팩터리를 제네릭 싱글턴 팩터리로 만들 수 있다는 예시
+```JAVA
+public class SingletonFactory {
+    private static final Map<String, Object> instances = new HashMap<>();
+
+    private SingletonFactory() {
+        // Prevent instantiation
+    }
+
+    public static synchronized <T> T getInstance(String key, Supplier<T> supplier) {
+        if (!instances.containsKey(key)) {
+            instances.put(key, supplier.get());
+        }
+        return (T) instances.get(key);
+    }
+}
+
+public class DatabaseInfo {
+    private String ip;
+    private int port;
+
+    public DatabaseInfo(String ip, int port) {
+        this.ip = ip;
+        this.port = port;
+    }
+    
+    //이곳에서 재네릭을 이용한 싱글턴 인스턴스를 동적으로 생성
+    public static DatabaseInfo getInstance(String ip, int port) {
+        String key = ip + ":" + port;
+        return SingletonFactory.getInstance(key, () -> new DatabaseInfo(ip, port));
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        DatabaseInfo dbInfo1 = DatabaseInfo.getInstance("172.3.30.32", 5432);
+        DatabaseInfo dbInfo2 = DatabaseInfo.getInstance("192.168.1.1", 3306);
+    }
+}
+```
+
 ### 특징
     둘 중 하나의 방식으로 만든 싱글턴 클래스를 직렬화하려면 단순히 Serializable 을 구현한다고 선언
     하는것만으로는 부족하다. 모든 인스턴스 필드를 일시적(transient)이라고 선언하고 readResolve
