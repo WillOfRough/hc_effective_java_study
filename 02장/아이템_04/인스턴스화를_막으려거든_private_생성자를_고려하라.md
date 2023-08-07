@@ -1,108 +1,25 @@
 # [인스턴스화를 막으려거든 private 생성자를 고려하라]
 
-## 정적 팩터리 메서드를 사용하는 것이 더 좋을 수도 있다.
+    static 메서드와 static 필드를 모아둔 클래스를 만든 경우 해당 클래스를 abstract로 만들어도 인스턴스를 만드는 걸 막을 순 없다.
+    상속 받아서 인스턴스를 만들 수 있기 때문에.
+    
+    정적 멤버만 담은 유틸리티 클래스는 인스턴스로 만들어 쓰려고 설계한 것이 아니다.
+    하지만 생성자를 명시하지 않으면 컴파일러가 자동으로 기본 생성자를 만들어주기 때문에 의도치 않게 인스턴스화 될 수 있다.
 
-    public 생성자를 사용하여 객체를 생성하는 방법 외에,
-    정적 팩토리 메서드를 사용하여 해당 클래스의 인스턴스를 만드는 방법도 있다.
-    이에 대한 장점 5가지, 단점 2가지를 알아보자.
-
+    이러한 클래스의 인스턴스화를 막기 위해 명시적으로 private 생성자를 추가해야 한다.
 
 ```JAVA
-public class Foo {
-    String name;
-    String address;
-
-    public Foo() {
-    }
-
-    private static final Foo GOOD_NIGHT = new Foo();
-
-    public Foo(String name) {
-        this.name = name;
-
-    //[1] withName과 같이 이름을 가질 수 있다.
-    //[3] 리턴 타입에 인터페이스만 노출을 하고
-    public static Foo withName(String name) {
-        //[3] 실제 리턴하는 객체는 그 인터페이스의 구현체를 리턴
-        return new Foo(name);
-    }
-
-    public static Foo withAddress(String address) {
-        Foo foo = new Foo();
-        foo.address = address;
-        return foo;
-    }
-
-    public static Foo getFoo () {
-        return GOOD_NIGHT;
-    }
-
-    //[5] 리턴하는 클래스의 객체가 당장 없어도 됨.
-
-    //ex.) MyFoo.java라는 클래스를 어딘가에서 나중에 만들고, 어떤 텍스트 파일에서 
-    //     이 클래스에 대한 풀 패키지 경로(FQCN)를 어딘가의 텍스트 파일에 적어놨다고 치자. 
-    
-    // MyFoo.java
-    //public class MyFoo extends Foo {
-
-    //}
-
-    public static Foo getFoo(boolean flag) {
-        Foo foo = new Foo();
-
-        // TODO 어떤 특정 약속 되어 있는 텍스트 파일에서 Foo의 구현체의 FQCN 을 읽어온다.
-        // TODO FQCN 에 해당하는 인스턴스를 생성한다.
-        // TODO foo 변수를 해당 인스턴스를 가리키도록 수정한다.
-
-        return foo;
-    }
-
-    public static void main(String[] args) {
-        //[1]전통적인 방법, "subin"과 같이 생성자의 parameter가 반환하는 객체를 설명하지 못하는 경우보다
-        Foo foo = new Foo("subin");
-        //[1]잘 만든 이름을 가진 static factory를 사용하는 것이 더 읽기 편하다.
-        Foo foo1 = Foo.withName("subin")
-        //[2]매번 새로운 객체를 생성하지 않고 동일한 GOOD_NIGHT이라는 Foo 객체가 생성이 된다.
-        Foo foo2 = Foo.getFoo();
+// Noninstantiable utility class
+public class UtilityClass {
+    // Suppress default constructor for noninstantiability
+    private UtilityClass() {
+        throw new AssertionError();
     }
 }
 ```
 
+    AssetionError는 꼭 필요하진 않지만, 그렇게 하면 의도치 않게 생성자를 호출한 경우에 에러를 발생시킬 수 있다.
+    생성자를 제공하지만 쓸 수 없기 때문에 직관에 어긋나는 점이 있는데, 그 때문에 위에 코드처럼 주석을 추가하는 것이 좋다.
 
-## 장점 3. 리턴 타입의 하위 타입 인스턴스를 만들 수도 있다.
-    반환할 객체의 클래스를 자유롭게 선택할 수 있게 하는 "유연성"을 제공한다.
-    리턴 타입의 하위 타입 인스턴스를 만들 수 있기 때문에, 리턴타입은 인터페이스로 지정하고 그 인터페이스의 구현체는 API로 노출시키지 않지만
-    그 구현체의 인스턴스를 만들어줄 수 있다.
-
-    따라서 API를 만들 때 이를 응용하면 구현 클래스를 공개하지 않고 그 객체를 반환할 수 있어 API를 작게 유지할 수 있다.
-    -> 이렇게 하면 프로그래머가 API를 사용할 때 알아야하는 개념의 수와 난이도를 낮출 수 있다.
-    
-    java.util.Collections를 이 예로 들 수 있다.
-    java.util.Collections개에 달하는 인터페이스의 구현체를 제공하지만 그 구현체들은 전부 non-public이다.
-    따라서 우리는 List나 Set같은 Collection 인터페이스의 구현체를 몰라도 다룰 수 있다.
-
-* java 8부터 인터페이스에  public static 메소드를 추가할 수 있게 되었지만
-* private static 메소드는 자바 9부터 추가할 수 있다. 
-* java 8에서 private static 메소드가 필요한 경우 기존처럼 별도의 클래스를 사용해야 할 수도 있다.
-
-
-## 장점 4. 리턴하는 객체의 클래스가 입력 매개변수에 따라 매번 다를 수 있다.
-    장점 3과 같은 이유로 객체의 타입은 매번 달라질 수 있다.
-    
-    (책에서는 EnumSet 클래스를 예로 들어,
-     파라미터의 개수에 따라 리턴하는 객체의 타입이 RegularEnumSet 또는 JumboEnumSet으로 달라진다고 하는데,
-     그런 객체 타입은 노출하지 않고 감춰져 있기 때문에
-     추후에 JDK의 변화에 따라 새로운 타입을 만들거나 기존 타입을 없애도 문제가 되지 않는다.)
-
-## 장점 5. 리턴하는 객체의 클래스가 public static 팩토리 메소드를 작성할 시점에 반드시 존재하지 않아도 된다.
-    장점 3, 4와 비슷한 개념이다. 이러한 유연성을 제공하는 static 팩토리 메소드는 서비스 프로바이더 프레임워크의 근본이다.
-    책에서는 JDBC를 예로 들고 있다.
-
-
-## 단점 1. public 또는 protected 생성자 없이 static public 메소드만 제공하는 클래스는 상속할 수 없다.
-    따라서, Collections 프레임워크에서 제공하는 편의성 구현체(java.util.Collections)는 상속할 수 없다.
-    오히려 불변 타입(아이템 17)인 경우나 상속 대신 컴포지션을 권장(아이템 18)하기 때문에 장점이라 말할지도 모르겠다.
-
-## 단점 2. 프로그래머가 static 팩토리 메소드를 찾는게 어렵다.
-    생성자는 Javadoc 상단에 모아서 보여주지만 static 팩토리 메소드는 API 문서에서 특별히 다뤄주지 않는다.
-    따라서 클래스나 인터페이스 문서 상단에 팩토리 메소드에 대한 문서를 제공하는 것이 좋겠다.
+    부가적으로 상속도 막을 수 있다.
+    상속한 경우에 명시적이든 암묵적이든 상위 클래스의 생성자를 호출해야 하는데, 이 클래스의 생성자가 private이라 호출이 막혔기 떄문에 상속을 할 수 없다.
