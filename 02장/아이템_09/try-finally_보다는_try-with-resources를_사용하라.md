@@ -153,3 +153,18 @@ try (BufferedReader br = new BufferedReader(new FileReader("file.txt"))) {
 }
 // 여기에서 BufferedReader의 close() 메서드가 자동으로 호출됩니다.
 ```
+
+```JAVA
+public void close() throws IOException {
+    synchronized (lock) {
+        if (in == null)
+            return;
+        try {
+            in.close();
+        } finally {
+            in = null;
+            cb = null;
+        }
+    }
+}
+```
