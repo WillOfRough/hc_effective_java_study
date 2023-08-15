@@ -29,7 +29,7 @@
 8. [finalizer와 cleaner 사용을 피하라]
 9. [try-finally보다는 try-with-resources를 사용하라](02장/아이템_09/try-finally_보다는_try-with-resources를_사용하라.md) (JS)
 10. [equals는 일반 규약을 지켜 재정의하라]
-11. [equals를 재정의하려거든 hashCode도 재정의하라]
+11. [equals를 재정의하려거든 hashCode도 재정의하라](03장/아이템_11/equals를_재정의_하려거든_hashCode도_재정의하라.md)
 12. [toString을 항상 재정의하라](03장/아이템_12/toString을_항상_재정의하라.md) (JS)
 13. [clone 재정의는 주의해서 진행하라]
 14. [Comparable을 구현할지 고려하라]
