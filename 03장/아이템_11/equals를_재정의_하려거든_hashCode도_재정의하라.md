@@ -29,7 +29,7 @@ PhoneNumber 클래스는 hashcode를 재정의 하지 않았기 때문에 서로
 
 이 문제는 PhoneNumber에 적절한 hashCode 메서드만 작성해주면 된다.
 
-# 잘못된 hashcode 재정의 -> 사용 금지!
+### 잘못된 hashcode 재정의 -> 사용 금지!
 ```JAVA
 @Override
 public int hashCode() {
