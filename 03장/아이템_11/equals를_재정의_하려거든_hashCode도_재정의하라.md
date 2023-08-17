@@ -139,7 +139,7 @@ public final class PhoneNumber {
 }
 ```
 
-## hashCoe를 재정의할 때 주의사항
+## hashCode를 재정의할 때 주의사항
 1. 해시 충돌이 더욱 적은 방법을 꼭 써야 한다면 Guava의 Hashing을 참고하자.
 
 2. 성능에 민감하지 않다면 Objects.hash를 사용하는 것을 고려하라.
