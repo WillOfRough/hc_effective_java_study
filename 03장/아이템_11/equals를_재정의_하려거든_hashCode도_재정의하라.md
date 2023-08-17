@@ -153,3 +153,8 @@ public final class PhoneNumber {
 4. hashCode가 반환하는 값의 생성 규칙을 API 사용자에게 자세히 공표하지 마라.
     그래야 클라이언트가 이 값에 의지하지 않게 되고, 추후에 계산 방식을 바꿀 수도 있다.
 
+## 정리...
+* eqauls를 재정의 할 때는 hashCode도 반드시 재정의 해야한다.
+* Lombok이 제공하는 EqualsAndHashCode를 사용하거나
+* 구글이 제공하는 AutoValue 프레임워크를 사용
+* 굳이 해시코드 때문에 Guava 라이브러리를 추가..? 위 방법 두가지 중 쓰자
