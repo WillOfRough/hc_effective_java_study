@@ -53,7 +53,7 @@ public class PhoneNumber implements Cloneable {
 }
 
 @Test
-public void Cloneable을_구현한_클래스는_clone이_가능하다() {
+public void Test() { //Cloneable을_구현한_클래스는_clone이_가능하다
     PhoneNumber phoneNumber = new PhoneNumber(031, 123, 1234);
     PhoneNumber clonedNumber = (PhoneNumber) phoneNumber.clone();
 
