@@ -112,6 +112,22 @@ assertEquals(0, comparator.compare(p1, p1));
 assertEquals(1, comparator.compare(p2, p1));
 ```
 
+* Comparator의 많은 보조 생성 메서드
+```JAVA
+// 자바의 숫자용 기본 타입을 모두 커버한다.
+.comparingInt(ToIntFunction keyExtractor);                       // int, short
+.comparingLong(ToLongFunction keyExtractor);                     // long
+.comparingDouble(ToDoubleFunction keyExtractor);                 // float, double
+
+// 객체 참조용 비교자 생성 메서드
+.comparing(Function keyExtractor);                               // 키의 자연적 순서를 이용한 비교
+.comparing(Function keyExtractor, Comparator keyComparator);     // 비교자 추가
+// 객체 참조용 보조 비교자 생성 메서드
+.thenComparing(Function keyExtractor);                           // 키의 자연적 순서를 비용한 보조 비교
+.thenComparing(Comparator keyComparator);                        // 원본 키에 보조 비교자 추가
+.thenComparing(Function keyExtractor, Comparator keyComparator); // 키와 비교자 모두 추가
+```
+
 ## 정리...
 * 순서를 고려해야 하는 값 클래스를 작성한다면 꼭 Comparable 인터페이스를 구현하여  
 * 그 인스턴스들을 쉽게 정렬하고, 검색하고, 비교 기능을 제공하는 컬렉션과 어우러지게 해야한다.
