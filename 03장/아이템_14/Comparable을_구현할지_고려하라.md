@@ -4,10 +4,12 @@ Comparable은 자연적인 순서(natural order)가 있는 경우 그 순서를 
 Comparable 인터페이스는 제네릭 타입을 가지고 있기 때문에 컴파일 시 타입 체킹이 가능하다는 장점이 있다.  
 Object 클래스의 equals와 비슷한데 다른 점은 순서를 비교할 수 있고 제네릭 타입을 가진다는 것이다.
 comparable 인터페이스가 가진 유일한 메소드인 compareTo의 규약을 알아본다.  
+
     _compareTo는 -1, 0, 1을 리턴한다._
 
 ## compareTo 규약
 * 반사성  
+
     자기 자신과 비교를 했을 때 같다고 나와야 한다.
     x.compareTo(x) == 0
 * 대칭성  
