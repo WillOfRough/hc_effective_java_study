@@ -1,13 +1,60 @@
 # [Comparable을 구현할지 고려하라]
 
-equals를 재정의한 클래스 모두에서 hashCode도 재정의 해야한다.  
-그렇지 않으면 hashCode 일반 규약을 어기기 되어 해당 클래스의 인스턴스를 HashMap이나 HashSet 같은 컬렉션의 원소로 사용할 때 문제를 일으킬 것이다. 
+Comparable은 자연적인 순서(natural order)가 있는 경우 그 순서를 정의해주는 방법을 구현할 수 있다.  
+Comparable 인터페이스는 제네릭 타입을 가지고 있기 때문에 컴파일 시 타입 체킹이 가능하다는 장점이 있다.  
+Object 클래스의 equals와 비슷한데 다른 점은 순서를 비교할 수 있고 제네릭 타입을 가진다는 것이다.
+comparable 인터페이스가 가진 유일한 메소드인 compareTo의 규약을 알아본다. 
+    _compareTo는 -1, 0, 1을 리턴한다._
 
-## Object 명세에서 발췌한 hashCode 규약
-* equals 비교에 사용하는 정보가 변경되지 않았다면 hashCode는 매번 같은 값을 리턴해야 한다.  
- (변경되거나, 애플리케이션을 다시 실행했다면 달라질 수 있다.)
-* **두 객체에 대한 equals가 같다면, hashCode의 값도 같아야 한다**
-* 두 객체에 대한 equals가 다르더라도, hashCode의 값은 같을 수 있지만 해시 테이블 성능을 고려해 다른 값을 리턴하는 것이 좋다.
+## compareTo 규약
+* 반사성
+    자기 자신과 비교를 했을 때 같다고 나와야 한다.
+    x.compareTo(x) == 0
+* 대칭성
+
+* 추이성
+
+* 일관성
+
+* compareTo가 0이라면 equals는 true여야 한다. (아닐 수도 있고.. 일반 규약은 아니지만 지키면 좋은 것)
+
+
+```JAVA
+// BigDecimal같은 경우가 대표적으로 Comparable을 구현하고 있는 클래스임.
+import java.math.BigDecimal;
+
+public class CompareToConvention {
+    public static void main(String[] args) {
+        BigDecimal n1 = BigDecimal.valueOf(23134134);
+        BigDecimal n2 = BigDecimal.valueOf(11231230);
+        BigDecimal n3 = BigDecimal.valueOf(53534552);
+        BigDecimal n4 = BigDecimal.valueOf(11231230);
+
+        // p88, 반사성
+        System.out.println(n1.compareTo(n1));
+
+        // p88, 대칭성
+        System.out.println(n1.compareTo(n2));
+        System.out.println(n2.compareTo(n1));
+
+        // p89, 추이성
+        System.out.println(n3.compareTo(n1) > 0);
+        System.out.println(n1.compareTo(n2) > 0);
+        System.out.println(n3.compareTo(n2) > 0);
+
+        // p89, 일관성
+        System.out.println(n4.compareTo(n2));
+        System.out.println(n2.compareTo(n1));
+        System.out.println(n4.compareTo(n1));
+
+        // p89, compareTo가 0이라면 equals는 true여야 한다.
+        BigDecimal oneZero = new BigDecimal("1.0");
+        BigDecimal oneZeroZero = new BigDecimal("1.00");
+        System.out.println(oneZero.compareTo(oneZeroZero)); // Tree, TreeMap
+        System.out.println(oneZero.equals(oneZeroZero)); // 순서가 없는 콜렉션
+    }
+}
+```
 
 ## hashCode 재정의를 잘못 했을 때
 가장 크게 문제가 되는 조항은 2번째, 두 객체에 대한 equals가 같다면 hashCode의 값도 같아야 한다는 점이다.  
