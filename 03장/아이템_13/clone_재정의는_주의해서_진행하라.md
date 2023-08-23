@@ -352,4 +352,40 @@ public static Student newInstance(Student student) {
 ```
 
 
-### 
+## Unchecked Exception (비검사 예외)
+
+```JAVA
+public class MyException extends RuntimeException { // RuntimeException, Error, NullPointException ...
+}
+
+public class MyApp {
+
+    public void hello(String name) throws MyException {
+        if (name.equals("푸틴")) {
+            throw new MyException();
+        }
+
+        System.out.println("hello");
+    }
+
+    public static void main(String[] args) {
+        MyApp myApp = new MyApp();
+        try {
+            myApp.hello("푸틴");
+        } catch (MyException e) {
+            e.printStackTrace();
+        }
+    }
+
+```
+
+### 비검사 예외
+1. Error는 시스템적인 예외를 의미하고 개발자가 예외(try-catch)를 잡지 말라고 하며 심각한 상황에서 발생하는 예외이다.
+2. 시스템에서는 치명적이므로 일어나서는 안되지만 만약 발생하면 해결하기 위해 로그를 남기도록 한다.
+3. Exception을 상속 받았지만 RuntimeException은 Unchecked로 비검사 예외이다.
+
+
+### 검사 예외
+1. 개발자가 명시해야 하는 부분은 검사 예외인 Exception으로 어플리케이션 수행 중에 일어날법한 예외를 검사하고 대비하라는 목적으로 사용한다.
+2. 대표적으로 InterruptedException이며 sleep()함수는 interrupt() 함수 호출 시 interruptedException이 발생 할 수 있으니 대비해야 한다.
+3. 과도하게 예외 검출을 하면 시스템의 성능이 떨어진다.
