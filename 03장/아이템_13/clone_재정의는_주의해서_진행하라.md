@@ -24,7 +24,8 @@ clone 메서드는 object에 선언되어 있으며, 심지어 protected 메서�
     그렇지 않은 클래스의 인스턴스에서 호출하면 CloneNotSupportedException 을 던진다.
 
     인터페이스를 구현한다는 것은 일반적으로 해당 클래스가 그 인터페이스에서 정의한 기능을 제공한다고 선언하는 행위이기 때문에
-    상위 클래스에 정의된 접근 제어자를 변경하면 안된다. 그러나 사용자정의 clone()은 Cloneable 의 protected clone()메서드를 재정의하며 동작방식을 변경하여 사용한다.
+    상위 클래스에 정의된 접근 제어자를 변경하면 안된다. 
+    그러나 사용자정의 clone()은 Cloneable 의 protected clone()메서드를 재정의하며 동작방식을 변경하여 사용한다.
 
 ```JAVA
 @Getter
@@ -349,3 +350,6 @@ public static Student newInstance(Student student) {
         return new Student(student);
 }
 ```
+
+
+### 

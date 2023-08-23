@@ -244,6 +244,11 @@ public class Point{
     일반 Point 를 반환하는 뷰 메서드를 추가하는 방식이다. 
     해당 방식은, equals 규약(대칭성/추이성)을 지키면서 값을 추가할 수 있다.
 
+#### 컴포지션
+    기존 클래스가 새로운 클래스의 구성 요소로 쓰인다.
+    기존 클래스를 확장하는 대신, 새로운 클래스를 만들고 private 필드로 기존 클래스의 인스턴스를 참조하게 한다.
+    컴포지션을 통해 새 클래스의 인스턴스 메서드들은 기존 클래스에 대응하는 메서드를 호출해 그 결과를 반환한다.
+
 
 ```JAVA
 public class ColorPoint {
@@ -273,6 +278,11 @@ public class ColorPoint {
     }
 }
 ```
+
+    ColorPoint 와 ColorPoint : ColorPoint equals로 서로 비교
+    ColorPoint 와 Point : ColorPoint asPoint()를 사용해서 Point의 equals로 서로 비교 ?
+    Point와 Point : Point의 equals로 서로 비교
+
 
 ## 4. 일관성(consistency)
 `null이 아닌 모든 참조 값 x,y에 대해, x.equals(y)를 반복해서 호출하면 항상 true를 반환하거나 항상 false를 반환한다.`
