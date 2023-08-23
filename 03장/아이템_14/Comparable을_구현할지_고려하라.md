@@ -128,6 +128,8 @@ assertEquals(1, comparator.compare(p2, p1));
 .thenComparing(Function keyExtractor, Comparator keyComparator); // 키와 비교자 모두 추가
 ```
 
+* [Comparable과 Comparator의 차이](https://st-lab.tistory.com/243)
+
 ## 정리...
 * 순서를 고려해야 하는 값 클래스를 작성한다면 꼭 Comparable 인터페이스를 구현하여  
 * 그 인스턴스들을 쉽게 정렬하고, 검색하고, 비교 기능을 제공하는 컬렉션과 어우러지게 해야한다.
