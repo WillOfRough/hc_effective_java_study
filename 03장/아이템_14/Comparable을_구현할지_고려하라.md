@@ -2,22 +2,24 @@
 
 Comparable은 자연적인 순서(natural order)가 있는 경우 그 순서를 정의해주는 방법을 구현할 수 있다.  
 Comparable 인터페이스는 제네릭 타입을 가지고 있기 때문에 컴파일 시 타입 체킹이 가능하다는 장점이 있다.  
-Object 클래스의 equals와 비슷한데 다른 점은 순서를 비교할 수 있고 제네릭 타입을 가진다는 것이다.
+Object 클래스의 equals와 비슷한데 다른 점은 순서를 비교할 수 있고 제네릭 타입을 가진다는 것이다.  
 comparable 인터페이스가 가진 유일한 메소드인 compareTo의 규약을 알아본다.  
-> compareTo는 -1, 0, 1을 리턴한다.
+> compareTo는 음수, 0, 양수를 리턴한다.
+> 음수: 내가 넘겨받은 값보다 작을 때
+> 0: 같을때
+> 양수: 내가 넘겨받은 값보다 클 때
 
 ## compareTo 규약
 * 반사성  
-> 자기 자신과 비교를 했을 때 같다고 나와야 한다
-> x.compareTo(x) == 0
+> 자기 자신과 비교를 했을 때 같다고 나와야 한다.
 * 대칭성  
-
+> A는 B보다 값이 크면, B는 A보다 값이 작다.
 * 추이성  
-
+> A는 B보다 값이 크고, B가 C보다 값이 크면, A는 C보다 값이 크다.
 * 일관성  
-
-* compareTo가 0이라면 equals는 true여야 한다. (아닐 수도 있고.. 일반 규약은 아니지만 지키면 좋은 것)  
-
+> A랑 B가 값이 같고, B가 C보다 값이 크면 A도 C보다 값이 크다.
+* compareTo가 0이라면 equals는 true여야 한다. (안 지켜질 수도 있고.. 일반 규약은 아니지만 지키면 좋은 것)  
+> 
 
 ```JAVA
 // BigDecimal같은 경우가 대표적으로 Comparable을 구현하고 있는 클래스임.
@@ -48,15 +50,18 @@ public class CompareToConvention {
         System.out.println(n4.compareTo(n1));
 
         // p89, compareTo가 0이라면 equals는 true여야 한다.
+        // 아래는 위가 안지켜지는 경우의 예제임.
+        // compareTo는 scale을 중요하게 생각하지 않지만 equals는 중요하게 생각한다.
         BigDecimal oneZero = new BigDecimal("1.0");
         BigDecimal oneZeroZero = new BigDecimal("1.00");
-        System.out.println(oneZero.compareTo(oneZeroZero)); // Tree, TreeMap
-        System.out.println(oneZero.equals(oneZeroZero)); // 순서가 없는 콜렉션
+        System.out.println(oneZero.compareTo(oneZeroZero)); // 순서가 있는 컬렉션인 Tree, TreeMap의 경우 compareTo. 같다고 나온다.
+        System.out.println(oneZero.equals(oneZeroZero)); // 순서가 없는 콜렉션, 같다고 나오지 않는다.
     }
 }
 ```
 
-## hashCode 재정의를 잘못 했을 때
+## Comparable 구현 방법
+자바가 제공하는 Comparable 인터페이스 말고 우리가 만든 클래스에 자연적인 순서를 주고싶을 때 어떻게 해야할까?
 가장 크게 문제가 되는 조항은 2번째, 두 객체에 대한 equals가 같다면 hashCode의 값도 같아야 한다는 점이다.  
 즉 논리적으로 같은 객체는 같은 해시코드를 반환해야 한다.
 
