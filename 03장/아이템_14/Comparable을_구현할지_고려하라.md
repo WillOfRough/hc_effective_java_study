@@ -87,6 +87,7 @@ public final class PhoneNumber implements Cloneable, Comparable<PhoneNumber> {
         }
         return result;
     }
+}
 ```
 
 ## Comparator의 비교자 생성 메소드를 이용한 비교
