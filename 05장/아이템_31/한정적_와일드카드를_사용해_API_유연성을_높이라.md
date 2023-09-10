@@ -5,6 +5,7 @@
 * List<String>은 List<Object>의 하위 타입이 아니며, List<Object>에는 어떤 객체든 넣을 수 있지만 List<String>에는 문자열만 넣을 수 있다.  
 * 그러나 때론 불공변 방식보다 유연한 무언가가 필요하다.  
 
+
 아이템 29의 Stack 클래스를 떠올려보자.
 ```JAVA
 public class Stack<E> {
