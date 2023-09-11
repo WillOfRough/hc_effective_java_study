@@ -74,6 +74,22 @@ public void popAll(Collection<? super E> dst) {
 * PECS 공식은 와일드카드 타입을 사용하는 기본 원칙이다.  
 * PECS라는 공식을 외워두면 어떤 와일드카드 타입을 써야 하는지 기억하는 데 도움이 될 것이다.  
 * PECS는 매개변수화 타입 T가 생산자라면 `<? extends T>` 를 사용하고, 소비자라면 `<? super T>` 를 사용하라는 공식이다.  
+* Producer(생산자): 데이터를 생성하고 공급하는 역할. 주로 데이터를 생성하고 공유 자원(예: 큐 또는 공유 데이터 구조)에 데이터를 추가하거나 넣는 작업을 수행  
+* Consumer(소비자): Producer가 생성한 데이터를 소비하고 처리하는 역할. 데이터를 처리하고 관련 작업을 수행.   
 
-* 예시 1. 
+### 예시 1. Stack의 popAll 과 pushAll
+pushAll의 src 매개변수는 Stack이 사용할 E 인스턴스를 생산하므로 src 의 적절한 타입은 Iterable<? extends E>이다.  
+한편 popAll의 dst 매개변수는 Stack으로부터 E 인스턴스를 소비하므로 dst의 적절한 타입은 Collection<? super E>이다.  
 
+### 예시 2. 아이템28의 Chooser 생성자
+choices 컬렉션은 T 타입의 값을 생산하기만 한다.  
+```java
+public Chooser(Collection<T> choices)
+```
+이를 PECS 공식에 따라 개선하면 다음과 같다.
+```java
+public Chooser(Collection<? extends T> choices)
+```
+
+### 주의 사항
+> 반환 타입에는 한정적 와일드카드 타입을 사용하면 안된다. 유연성을 높여주기는 커녕 클라이언트 코드에서도 와일드카드 타입을 써야 하기 때문이다.  
