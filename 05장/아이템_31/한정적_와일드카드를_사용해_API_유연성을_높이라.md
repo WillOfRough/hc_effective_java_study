@@ -5,7 +5,7 @@
 * List<String>은 List<Object>의 하위 타입이 아니며, List<Objec>에는 어떤 객체든 넣을 수 있지만 List<String>에는 문자열만 넣을 수 있다.  
 * 그러나 때론 불공변 방식보다 유연한 무언가가 필요하다.  
 
-아이템 29의 Stack 클래스를 떠올려보자.
+* 아이템 29의 Stack 클래스를 떠올려보자.
 
 ```JAVA
 public class Stack<E> {
@@ -44,3 +44,33 @@ public void pushAll(Iterable<? extends E> src) {
         push(e);
 }
 ```
+마찬가지로 아래와 같이 popAll() 이라는 메소드가 있다면  
+```java
+public void popAll(Collection<E> dst) {
+    while (!isEmpty())
+        dst.add(pop());
+}
+```
+이를 사용하는 코드는 다음과 같을 수 있다.
+```java
+Stack<Number> numberStack = new Stack<>();
+Collection<Object> objects = ...;
+numberStack.popAll(objects);
+```
+```java
+하지만 pushAll() 때와 마찬가지로 컴파일을 하면 에러가 발생한다. 이를 해결하기 위해 한정적 와일드카드 타입을 적용하면 다음과 같다.  
+public void popAll(Collection<? super E> dst) {
+    while (!isEmpty())
+        dst.add(pop());
+}
+```
+
+### 와일드카드 타입을 쓰지 말아야 하는 상황
+> 입력 매개변수가 생산자와 소비자 역할을 동시에 한다면 와일드카드 타입을 써도 좋을 게 없다.  
+> 이 때는 타입을 정확히 지정해야 하는 상황으로 와일드카드 타입을 쓰지 말아야 한다.  
+
+## PECS(Producer-Extends, Consumer-Super)
+* PECS 공식은 와일드카드 타입을 사용하는 기본 원칙이다.  
+* PECS라는 공식을 외워두면 어떤 와일드카드 타입을 써야 하는지 기억하는 데 도움이 될 것이다.  
+* PECS는 매개변수화 타입 T가 생산자라면 "<? extends T>" 를 사용하고, 소비자라면 "<? super T>" 를 사용하라는 공식이다.  
+
