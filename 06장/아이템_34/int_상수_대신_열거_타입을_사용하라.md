@@ -23,7 +23,7 @@ public enum Orange { NAVEL, TEMPLE, BLOOD }
 ```
 
 ### 열거 타입의 장점
-* 불변이다.
+* 불변이다.  
     열거 타입은 하나의 완전한 클래스로, 상수 하나당 자신의 인스턴스를 하나씩 만들어 public static final 필드로 공개한다.  
     이는 열거 타입이 인스턴스 통제된다는 뜻이다.
 
