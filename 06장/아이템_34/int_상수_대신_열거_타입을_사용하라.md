@@ -1,20 +1,17 @@
 # [int 상수 대신 열거 타입을 사용하라]
 
-## 유연성을 위해 원소의 생산자나 소비자용 입력 매개변수에 와일드카드 타입을 사용하라
-* 아이템28에서 이야기 했듯 매개변수화 타입은 불공변이다.  
-* List<String>은 List<Object>의 하위 타입이 아니며, List<Objec>에는 어떤 객체든 넣을 수 있지만 List<String>에는 문자열만 넣을 수 있다.  
-* 그러나 때론 불공변 방식보다 유연한 무언가가 필요하다.  
-
-* 아이템 29의 Stack 클래스를 떠올려보자.
-
+정수 열거 패턴은 단점이 많고 상당히 취약하다.
+> 정수 열거 패턴
 ```JAVA
-public class Stack<E> {
-    public Stack();
-    public void push(E e);
-    public E pop();
-    public boolean isEmpty();
-}
+public static final int APPLE_FUJI         = 0;
+public static final int APPLE_PIPPIN       = 1;
+public static final int APPLE_GRANNY_SMITH = 2;
+
+public static final int ORANGE_NAVEL  = 0;
+public static final int ORANGE_TEMPLE = 1;
+public static final int ORANGE_BLOOD  = 2;
 ```
+
 여기에 일련의 요소를 스택에 넣는 메소드를 추가해야 한다고 했을 때
 ```java
 public void pushAll(Iterable<e> src) {
