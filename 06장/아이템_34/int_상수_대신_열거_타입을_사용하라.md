@@ -35,16 +35,17 @@ public enum Orange { NAVEL, TEMPLE, BLOOD }
 
 * **열거 타입을 이용한 프로그램은 잘 깨지지 않는다.**  
     열거 타입에 새로운 상수를 추가하거나 순서를 바꿔도 클라이언트를 다시 컴파일 하지 않아도 된다.  
+    만일 제거한 상수를 참조하는 클라이언트가 있다면 그 클라이언트 프로그램을 다시 컴파일 할 때 컴파일 오류가 발생할 것이고, 컴파일하지 않는다해도 런타임에 같은 줄에서 유용한 예외가 발생한다. 이는 열거 패턴에서는 기대할 수 없었다. 
 
 * **문자열로 출력하기 좋다.**  
     열거 패턴은 출력하면 의미가 아닌 단지 숫자로만 보여서 출력하기 까다로웠다. 열거 타입의 toString 메서드는 출력하기 좋은 문자열을 내어준다.
 
 * **임의의 메서드나 필드를 추가하거나 임의의 인터페이스를 구현할 수 있다.** 
-
+열거 타입은 Object 메소드들과 Comparable, Serializable을 잘 구현해 놓았기 때문에 문제없이 사용 가능하다.  
 ```java
 // 코드 34-3 데이터와 메서드를 갖는 열거 타입 (211쪽)
 public enum Planet {
-    MERCURY(3.302e+23, 2.439e6),
+    MERCURY(3.302e+23, 2.439e6),  // 행성의 질량과 반지름
     VENUS  (4.869e+24, 6.052e6),
     EARTH  (5.975e+24, 6.378e6),
     MARS   (6.419e+23, 3.393e6),
@@ -76,6 +77,9 @@ public enum Planet {
     }
 }
 ```
+위 예시의 열거 타입 상수 오른쪽 괄호 안 상수는 생성자에 넘겨지는 매개변수이다.  
+열거 타입 상수 각각을 특정 데이터와 연결 지으려면 생성자에서 데이터를 받아 인스턴스 필드에 저장하면 된다.  
+열거 타입은 불변이라 모든 필드는 final이어야 한다. 필드를 public을 선언해도 되지만, private으로 두고 별도의 public 접근자 메서드를 두는게 낫다. (아이템 16, 17 참고)  
 
 ```java
 // 어떤 객체의 지구에서의 무게를 입력받아 여덟 행성에서의 무게를 출력한다. (212쪽)
@@ -88,16 +92,20 @@ public class WeightTable {
                            p, p.surfaceWeight(mass));
    }
 }
-
-// MERCURY에서의 무게는 69.912739이다.
-// VENUS에서의 무게는 167.434436이다.
-// EARTH에서의 무게는 185.000000이다.
-// JUPITER에서의 무게는 70.226739이다.
-// SATURN에서의 무게는 197.120111이다.
-// URANUS에서의 무게는 167.398264이다.
-// NEPTUNE에서의 무게는 210.208751이다.
 ```
+열거 타입은 자신 안에 정의된 상수들의 값을 배열에 담아 반환하는 정적 메서드 values를 제공한다. 
+System.out.printf 메서드에서 %s 포맷 지정자를 통해 toString 메서드가 내부적으로 호출되어 위를 실행하면 다음과 같은 결과가 나온다.
+> MERCURY에서의 무게는 69.912739이다.  
+> VENUS에서의 무게는 167.434436이다.  
+> EARTH에서의 무게는 185.000000이다.  
+> JUPITER에서의 무게는 70.226739이다.  
+> SATURN에서의 무게는 197.120111이다.  
+> URANUS에서의 무게는 167.398264이다.  
+> NEPTUNE에서의 무게는 210.208751이다.  
 
+## 상수별 메소드 구현(Constant-specific method implementation)
+열거 타입을 사용할 때 상수마다 동작이 달라져야 하는 상황이 있을 수 있다. 
+이 때 switch 문을 사용한다면 다음과 같이 사용할 수 있다. 하지만 열거 타입에 상수가 추가되었을 때 case문을 깜빡하고 추가해주지 않으면 런타임 에러가 발생할 수 있다.  
 ```java
 public enum Operation {
     PLUS, MINUS, TIMES, DIVIDE;
@@ -113,7 +121,8 @@ public enum Operation {
     }
 }
 ```
-
+열거 타입은 상수별로 다르게 동작하는 코드를 구현하는 더 나은 수단을 제공한다.  
+**즉, 열거 타입에 추상 메소드를 선언하고 각 상수에서 자신에 맞게 재정의하는 방법이다. 이를 상수별 메소드 구현**이라 한다.
 ```java
 public enum Operation {
     PLUS   { public double apply(double x, double y) { return x + y; }},
@@ -145,6 +154,7 @@ public enum Operation {
 
     Operation(String symbol) { this.symbol = symbol; }
 
+    // toString을 재정의하여 해당 연산을 뜻하는 기호를 반환하도록 할 수도 있다.
     @Override public String toString() { return symbol; }
 
     public abstract double apply(double x, double y);
@@ -167,8 +177,16 @@ public enum Operation {
                     x, op, y, op.apply(x, y));
     }
 }
-```
 
+// 명령줄 인수에 2와 4를 주어 이 프로그램을 실행한 결과
+// 2.000000 + 4.000000 = 6.000000
+// 2.000000 - 4.000000 = -2.000000
+// 2.000000 * 4.000000 = 8.000000
+// 2.000000 / 4.000000 = 0.500000
+```
+### toString을 제공할 때 fromString도 함께 제공하는 것을 고려하라.
+열거 타입의 toString 메소드를 재정의하려거든 toString이 반환하는 문자열을 해당 열거 타입 상수로 변환해주는 fromString 메소드를 함께 제공하는 것을 고려하라.
+변환된 문자열을 다시 열거 상수로 변환하는데 유용하며 이는 가독성 향상, 오타 방지, 유효성 검사, 확장성 등에 도움을 준다.  
 ```java
 // 코드 34-8 열거 타입용 fromString 메서드 구현하기 (216쪽)
 private static final Map<String, Operation> stringToEnum = 
@@ -180,26 +198,26 @@ public static Optional<Operation> fromString(String symbol) {
     return Optional.ofNullable(stringToEnum.get(symbol));
 }
 ```
+### 상수별 메서드 구현의 단점
+상수별 메서드 구현에는 열거 타입 상수끼리 코드를 공유하기 어렵다는 단점이 있다.  
+열거 타입에 값을 추가하고 그 값을 처리하는 switch문을 작성한다고 쳤을 때 열거 타입과 case문을 잊지말고 쌍으로 넣어줘야하기 때문에 관리 관점에서 어려움이 있다.  
 
+## 전략 열거 타입 패턴
+위 상수별 메서드 구현의 단점을 가장 깔끔하게 해결하는 방법이다.  
+
+계산을 private 중첩 열거 타입(다음 코드의 PayType)으로 옮기고 PayrollDay 열거 타입의 생성자에서 이 중 적당한 것을 선택한다.  
+그러면 PayrollDay 열거 타입은 계산을 그 전략 열거 타입에 위임하여 switch 문이나 상수별 메서드 구현이 필요 없게 된다.  
+이 패턴은 switch 문보다 복잡하지만 더 안전하고 유연하다.
 ```java
 // 코드 34-9 전략 열거 타입 패턴 (218-219쪽)
 enum PayrollDay {
     MONDAY(WEEKDAY), TUESDAY(WEEKDAY), WEDNESDAY(WEEKDAY),
     THURSDAY(WEEKDAY), FRIDAY(WEEKDAY),
     SATURDAY(WEEKEND), SUNDAY(WEEKEND);
-    // (역자 노트) 원서 1~3쇄와 한국어판 1쇄에는 위의 3줄이 아래처럼 인쇄돼 있습니다.
-    // 
-    // MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY,
-    // SATURDAY(PayType.WEEKEND), SUNDAY(PayType.WEEKEND);
-    //
-    // 저자가 코드를 간결하게 하기 위해 매개변수 없는 기본 생성자를 추가했기 때문인데,
-    // 열거 타입에 새로운 값을 추가할 때마다 적절한 전략 열거 타입을 선택하도록 프로그래머에게 강제하겠다는
-    // 이 패턴의 의도를 잘못 전달할 수 있어서 원서 4쇄부터 코드를 수정할 계획입니다.
 
     private final PayType payType;
 
     PayrollDay(PayType payType) { this.payType = payType; }
-    // PayrollDay() { this(PayType.WEEKDAY); } // (역자 노트) 원서 4쇄부터 삭제
     
     int pay(int minutesWorked, int payRate) {
         return payType.pay(minutesWorked, payRate);
@@ -235,6 +253,13 @@ enum PayrollDay {
 }
 ```
 
+## 열거 타입에서 switch 문이 유용한 상황
+그렇다면 switch 문이 유용할 때는 언제인가?  
+기존 열거 타입에 상수별 동작을 혼합해 넣을 때는 switch 문이 좋은 선택이 될 수 있다.  
+즉, 기존 열거 타입에 없는 기능을 수행하고자 할 때(다른 상수에 정의된 동작을 수행하게 한다거나 등등) switch 문을 사용할 수 있다.  
+예컨대 서드파티에서 가져온 Operation 열거 타입이 있는데, 각 연산의 반대 연산을 반환하는 메서드가 필요하다고 해보자.  
+
+다음과 같이 구현할 수 있다.  
 ```java
 // 코드 34-10 switch 문을 이용해 원래 열거 타입에 없는 기능을 수행한다. (219쪽)
 public static Operation inverse(Operation op) {
@@ -251,5 +276,5 @@ public static Operation inverse(Operation op) {
 ## 정리
 * 열거 타입은 정수 상수보다 더 읽기 쉽고 안전하며 강력하다.  
 * 대다수 열거 타입이 명시적 생성자나 메서드 없이 쓰이지만, 각 상수를 특정 데이터와 연결짓거나 상수마다 다르게 동작할때는 필요하다.  
-*  드물게 하나의 메서드가 상수별로 다르게 동작해야 할 때도 있는데, 이런 열거 타입에서는 switch문 대신 상수별 메서드 구현을 사용한다.  
+* 드물게 하나의 메서드가 상수별로 다르게 동작해야 할 때도 있는데, 이런 열거 타입에서는 switch문 대신 상수별 메서드 구현을 사용한다.  
 * 열거 타입 상수 일부가 같은 동작을 공유한다면 전략 열거 타입 패턴을 사용한다.
