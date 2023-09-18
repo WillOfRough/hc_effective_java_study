@@ -26,7 +26,7 @@ public class Main {
 - - -
 
 ## 해결 방법
-
+ordinal() 말고 인스턴스 필드를 사용하자
 
 ```JAVA
 public enum Ensemble {
@@ -47,3 +47,6 @@ public class Main {
    }
 }
 ```
+
+## 비고
+대부분 프로그래머는 이 메서드를 쓸 일이 없다. 이 메서드는 EnumSet과 EnumMap 같이 열거 타입 기반의 범용 자료구조에 쓸 목적으로 설계되었다 (Enum의 API 문서)
