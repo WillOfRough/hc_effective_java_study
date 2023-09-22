@@ -88,6 +88,10 @@ public class Text {
 }
 
 ```
+### applyStyles 메서드가 `EnumSet<Style>`이 아닌 `Set<Style>`을 받은 이유는?
+* 모든 클라이언트가 EnumSet을 건네리라 짐작되는 상황이라도 이왕이면 인터페이스로 받는 게 일반적으로 좋은 습관이다. (item 64)
+* 이런식으로 구현하면 좀 특이한 클라이언트가 다른 Set 구현체를 넘기더라도 처리할 수 있기 때문이다.
+
 
 ```JAVA
 public static void main(String[] args) {
@@ -97,7 +101,7 @@ public static void main(String[] args) {
 ```
 
 ## EnumSet 단점
-    EnumSet 은 불변이 불가능하다.
+    EnumSet은 불변 EnumSet을 만들수 없다.
     하지만 Collections.unmodifiableSet 으로 EnumSet을 감싸, 집합을 수정하려 하거든 예외를 터트리게 하는 방식으로 사용할 수 있는 방안은 존재한다.
 
 
