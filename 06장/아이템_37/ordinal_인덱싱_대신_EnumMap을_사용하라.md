@@ -122,4 +122,4 @@ public enum Phase {
 
 ## 정리
 * 배열의 인덱스를 얻기 위해 ordinal을 쓰는 것은 좋지 않으므로 EnumMap을 써라.  
-* 다차원 관계는 EnumMap<..., nmuMap<...>>으로 표현할 수 있따.  
+* 다차원 관계는 EnumMap<..., EnumMap<...>>으로 표현할 수 있다.  
